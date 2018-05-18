@@ -8,7 +8,7 @@
 #define PIN 0
 #define CLAP_PIN 1
 
-#define NUMPIXELS 44
+#define NUMPIXELS 30 //Number of pixels to show
 
 // GUItool: begin automatically generated code
 AudioInputAnalog         adc1(A9);           //xy=164,95
@@ -19,8 +19,6 @@ AudioConnection          patchCord2(adc1, notefreq1);
 // GUItool: end automatically generated code
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
-
-int pixelCounter=0;
 
 void clear_pixels(int pixelNum){
   for(int i=0;i<pixelNum;i++){
