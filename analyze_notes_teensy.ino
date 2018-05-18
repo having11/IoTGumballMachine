@@ -1,3 +1,10 @@
+/* Use a Teensy to analyze the amplitude and frequency of a piano when played. Louder = more pixels lit. Low pitch = blue, 
+high pitch = red. The mic breakout board gets connected to 3.3V, GND, and pin A9. The sound detector gets connected to 3.3V, GND, 
+and pin 1. The neopixels are connected to 5V, GND, and pin 0.
+To change what happens when someone triggers the sound detector, just add your new code into the "clapped" function at the bottom
+of the code.
+*/
+
 #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -32,7 +39,7 @@ void setup() {
   Serial.begin(115200);
   notefreq1.begin(.10);
   pixels.begin();
-  clear_pixels(44);
+  clear_pixels(30);
   pinMode(CLAP_PIN, INPUT);
   attachInterrupt(CLAP_PIN, clapped, RISING);
 }
