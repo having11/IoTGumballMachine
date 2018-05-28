@@ -11,6 +11,13 @@ of the code.
 #include <SD.h>
 #include <SerialFlash.h>
 #include <Adafruit_NeoPixel.h>
+#include <Servo.h>
+
+#define SERVOPIN 4
+
+#define SERVO_ZERO 0
+#define SERVO_START 90
+#define SERVO_END 180
 
 #define PIN 0
 #define CLAP_PIN 1
@@ -27,6 +34,10 @@ AudioConnection          patchCord2(adc1, notefreq1);
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
+Servo gumballServo;
+
+const int servo_sequence[6] = {SERVO_END, SERVO_START, SERVO_END, SERVO_ZERO, SERVO_END, SERVO_ZERO};
+
 void clear_pixels(int pixelNum){
   for(int i=0;i<pixelNum;i++){
     pixels.setPixelColor(i, pixels.Color(0,0,0));
@@ -35,6 +46,10 @@ void clear_pixels(int pixelNum){
 }
 
 void setup() {
+  gumballServo.attach(SERVOPIN);
+  gumballServo.write(SERVO_ZERO);
+  delay(100);
+  gumballServo.detach();
   AudioMemory(34);
   Serial.begin(115200);
   notefreq1.begin(.10);
@@ -78,6 +93,16 @@ void loop() {
 
 void clapped(){
   //Code goes here for when someone claps
-  
+  dispense();
 }
+
+void dispense(){
+  gumballServo.attach(SERVOPIN);
+  for(int i=0;i<6;i++){
+    gumballServo.write(servo_sequence[i]);
+    delay(2000);
+  }
+  gumballServo.detach();
+}
+
 
