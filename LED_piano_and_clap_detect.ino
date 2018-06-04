@@ -19,6 +19,7 @@ of the code.
 #define SERVO_START 90
 #define SERVO_END 180
 
+#define COOLDOWNTIME 5000 //5 seconds of cooldown for clapping
 #define PIN 0
 #define CLAP_PIN 1
 
@@ -56,12 +57,13 @@ void setup() {
   pixels.begin();
   clear_pixels(30);
   pinMode(CLAP_PIN, INPUT);
-  attachInterrupt(CLAP_PIN, clapped, RISING);
+  attachInterrupt(CLAP_PIN, clapped, FALLING);
 }
 
 // for best effect make your terminal/monitor a minimum of 31 chars wide and as high as you can.
 
 elapsedMillis fps;
+elapsedMillis cooldown;
 
 void loop() {
   if (fps > 12) {
@@ -92,17 +94,21 @@ void loop() {
 }
 
 void clapped(){
-  //Code goes here for when someone claps
-  dispense();
+  if(cooldown>COOLDOWNTIME){
+    cooldown = 0;
+    //Code goes here for when someone claps
+    dispense();
+  }
+  
 }
 
 void dispense(){
+  Serial.println("Dispense");
   gumballServo.attach(SERVOPIN);
   for(int i=0;i<6;i++){
+    Serial.print("Step ");Serial.print(i);Serial.print(" Action ");Serial.println(servo_sequence[i]);
     gumballServo.write(servo_sequence[i]);
-    delay(2000);
+    delay(500);
   }
   gumballServo.detach();
 }
-
-
