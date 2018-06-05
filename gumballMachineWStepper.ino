@@ -1,8 +1,8 @@
 // This #include statement was automatically added by the Particle IDE.
 #include <AccelStepper.h>
 
-#define LEDR D4
-#define LEDG D3
+#define LEDR D5
+#define LEDG D4
 
 #define ALL_LED 100
 
