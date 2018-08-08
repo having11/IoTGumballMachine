@@ -7,14 +7,25 @@
 #include <Adafruit_Thermal.h>
 #include <SdFat.h>
 
+Servo wheel_spin_servo;
+Servo detour_servo;
+
 SdFat sd;
 File image;
 LedControl *led;
 char message[64];
 int phase=0, messageLength=0;
 
-#define PANELNUM 5 //Number of 8x8 displays
-#define SPEED 100
+#define WHEEL_STOP 88
+#define WHEEL_RIGHT 180
+#define WHEEL_SERVO_PIN D5
+#define DETOUR_INITIAL 90
+#define DETOUR_FINAL 280
+#define DETOUR_PIN D6
+#define DETOUR_DELAY 1000
+
+#define PANELNUM 8//Number of 8x8 displays
+#define SPEED 20
 #define BRIGHTNESS 5 //1-15
 #define PULSEPIN D0
 
@@ -39,10 +50,38 @@ void setup() {
         led->shutdown(i,false);
         led->setIntensity(i,BRIGHTNESS);
     }
+    init_servos();
 }
 
 void loop() {
     updateMatrix();
+}
+
+void moveDetour(int oscillations){
+    detour_servo.attach(DETOUR_PIN);
+    detour_servo.write(DETOUR_INITIAL);
+    for(int i=0;i<oscillations;i++){
+        detour_servo.write(DETOUR_FINAL);
+        delay(DETOUR_DELAY);
+        detour_servo.write(DETOUR_INITIAL);
+        delay(DETOUR_DELAY);
+    }
+    detour_servo.detach();
+}
+
+void moveWheel(int duration){
+    wheel_spin_servo.attach(WHEEL_SERVO_PIN);
+    wheel_spin_servo.write(WHEEL_RIGHT);
+    delay(duration);
+    wheel_spin_servo.write(WHEEL_STOP);
+    wheel_spin_servo.detach();
+}
+
+void init_servos(){
+    wheel_spin_servo.attach(WHEEL_SERVO_PIN);
+    wheel_spin_servo.write(WHEEL_STOP);
+    detour_servo.attach(DETOUR_PIN);
+    detour_servo.write(DETOUR_INITIAL);
 }
 
 void updateMatrix(){
@@ -76,10 +115,10 @@ void handler(const char *event, const char *data){
         print_receipt();
     }
     else if(String(data)=="AUTO0"){ //move automata 0
-        
+        moveWheel(5000); //move wheel automata for 5 secs
     }
     else if(String(data)=="AUTO1"){ //move automata 1
-        
+        moveDetour(5); //move detour automata 5 times back and forth
     }
     else if(String(data)=="TONE"){
         playMusic();
