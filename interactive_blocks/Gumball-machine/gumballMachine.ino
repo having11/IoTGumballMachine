@@ -67,7 +67,7 @@ void loop()
     switch (effectsMode)
   {
     case RAINBOW_MODE:
-      rainbow(40);    // case 0
+      rainbow(40);    // first case
       break;
     case CHASE_MODE:
       chase(10);      // case 1
