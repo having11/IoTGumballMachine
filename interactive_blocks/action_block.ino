@@ -16,18 +16,25 @@ LedControl *led;
 char message[64];
 int phase=0, messageLength=0;
 
+#define SYSTEM_NUM 0 //0 for the first, 1 for the second
+#if SYSTEM_NUM == 0
+    #define NAME "ACTIONBLOCK"
+#else
+    #define NAME "ACTIONBLOCK1"
+#endif
+
 #define WHEEL_STOP 88
 #define WHEEL_RIGHT 180
-#define WHEEL_SERVO_PIN D5
+#define WHEEL_SERVO_PIN D0
 #define DETOUR_INITIAL 90
 #define DETOUR_FINAL 280
-#define DETOUR_PIN D6
+#define DETOUR_PIN D1
 #define DETOUR_DELAY 1000
 
 #define PANELNUM 8//Number of 8x8 displays
 #define SPEED 20
 #define BRIGHTNESS 5 //1-15
-#define PULSEPIN D0
+#define PULSEPIN WKP
 
 Adafruit_Thermal printer;
 
@@ -41,7 +48,7 @@ int melody[] = {NOTE_F4, NOTE_F4, NOTE_C5,NOTE_C5,NOTE_C5,NOTE_C5, NOTE_F4, NOTE
 int timings[] = {4,2,8,8,8,8,4,2,4,2};
 
 void setup() {
-    Particle.subscribe("ACTIONBLOCK",handler,MY_DEVICES);
+    Particle.subscribe(NAME,handler,MY_DEVICES);
     sd.begin(A2,SPI_HALF_SPEED);
     Serial1.begin(19200);
     printer.begin(&Serial1);
@@ -51,6 +58,7 @@ void setup() {
         led->setIntensity(i,BRIGHTNESS);
     }
     init_servos();
+    pinMode(PULSEPIN,OUTPUT);
 }
 
 void loop() {
@@ -115,6 +123,7 @@ void handler(const char *event, const char *data){
         print_receipt();
     }
     else if(String(data)=="AUTO0"){ //move automata 0
+    Particle.publish("action","moving auto0",PRIVATE);
         moveWheel(5000); //move wheel automata for 5 secs
     }
     else if(String(data)=="AUTO1"){ //move automata 1
