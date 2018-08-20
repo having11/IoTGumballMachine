@@ -2,6 +2,15 @@
 #include <Wire.h>
 #include <SparkFun_APDS9960.h>
 
+#define SYSTEM_NUM 0 //0 for the first, 1 for the second
+#if SYSTEM_NUM == 0
+    #define ACT_NAME "ACTIONBLOCK"
+    #define GUM_NAME "GUMBALL"
+#else
+    #define ACT_NAME "ACTIONBLOCK1"
+    #define GUM_NAME "GUMBALL1"
+#endif
+
 /*
 3.3v VCC
 GND GND
@@ -26,6 +35,7 @@ void setup() {
     if(apds.enableGestureSensor(false)){
         Particle.publish("init", "Gesture up", PRIVATE);
     }
+    Particle.publish("init",ACT_NAME,PRIVATE);
     cap.begin();
     cap.setSensitivity(6);
 }
@@ -33,16 +43,20 @@ void setup() {
 void loop() {
     poll_cap();
     if(cap_values[0]==127){ //Eggplant
-        Particle.publish("ACTIONBLOCK","AUTO0", PRIVATE);
+        Particle.publish(ACT_NAME,"AUTO0", PRIVATE);
+        delay(2000);
     }
     else if(cap_values[1]==127){ //teapot
-        Particle.publish("ACTIONBLOCK","AUTO1", PRIVATE);
+        Particle.publish(ACT_NAME,"AUTO1", PRIVATE);
+        delay(2000);
     }
     else if(cap_values[2]==127){ //penny
-        Particle.publish("GUMBALL","LIGHTCHANGE", PRIVATE);
+        Particle.publish(ACT_NAME,"LIGHTCHANGE", PRIVATE);
+        delay(2000);
     }
     else if(cap_values[3]==127){ //paperclip
-        Particle.publish("ACTIONBLOCK","PRINT", PRIVATE);
+        Particle.publish(ACT_NAME,"PRINT", PRIVATE);
+        delay(2000);
         enable_gesture = true;
     }
     if(enable_gesture){
@@ -67,29 +81,29 @@ void handleGesture() {
       case DIR_UP:
         Serial.println("UP");
         Particle.publish("DIR", "UP", PRIVATE);
-        Particle.publish("GUMBALL","DISPENSE", PRIVATE);
-        Particle.publish("ACTIONBLOCK","TONE",PRIVATE);
+        Particle.publish(GUM_NAME,"DISPENSE", PRIVATE);
+        Particle.publish(ACT_NAME,"TONE",PRIVATE);
         enable_gesture = false;
         break;
       case DIR_DOWN:
         Serial.println("DOWN");
         Particle.publish("DIR", "DOWN", PRIVATE);
-        Particle.publish("GUMBALL","DISPENSE", PRIVATE);
-        Particle.publish("ACTIONBLOCK","TONE",PRIVATE);
+        Particle.publish(GUM_NAME,"DISPENSE", PRIVATE);
+        Particle.publish(ACT_NAME,"TONE",PRIVATE);
         enable_gesture = false;
         break;
       case DIR_LEFT:
         Serial.println("LEFT");
         Particle.publish("DIR", "LEFT", PRIVATE);
-        Particle.publish("GUMBALL","DISPENSE", PRIVATE);
-        Particle.publish("ACTIONBLOCK","TONE",PRIVATE);
+        Particle.publish(GUM_NAME,"DISPENSE", PRIVATE);
+        Particle.publish(ACT_NAME,"TONE",PRIVATE);
         enable_gesture = false;
         break;
       case DIR_RIGHT:
         Serial.println("RIGHT");
         Particle.publish("DIR", "RIGHT", PRIVATE);
-        Particle.publish("GUMBALL","DISPENSE", PRIVATE);
-        Particle.publish("ACTIONBLOCK","TONE",PRIVATE);
+        Particle.publish(GUM_NAME,"DISPENSE", PRIVATE);
+        Particle.publish(ACT_NAME,"TONE",PRIVATE);
         enable_gesture = false;
         break;
       case DIR_NEAR:
