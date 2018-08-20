@@ -12,6 +12,13 @@
     #define STEPSTOTAKE 100 //100 steps
 #endif
 
+#define SYSTEM_NUM 0 //0 for the first, 1 for the second
+#if SYSTEM_NUM == 0
+    #define NAME "GUMBALL"
+#else
+    #define NAME "GUMBALL1"
+#endif
+
 #define PIXEL_PIN D6
 #define PIXEL_COUNT 24
 #define PIXEL_TYPE WS2812
@@ -52,7 +59,7 @@ void setup()
 {
     Particle.function("setlight", setlight);
     Particle.function("passDis", passDispense);
-    Particle.subscribe("GUMBALL",handle_gumball,MY_DEVICES);
+    Particle.subscribe(NAME,handle_gumball,MY_DEVICES);
 
     dispense_stepper.setMaxSpeed(500);
     dispense_stepper.setSpeed(200);
@@ -67,7 +74,7 @@ void loop()
     switch (effectsMode)
   {
     case RAINBOW_MODE:
-      rainbow(40);    // first case
+      rainbow(40);    // case 0
       break;
     case CHASE_MODE:
       chase(10);      // case 1
